@@ -1,30 +1,34 @@
 import os
 from typing import List
 from pydantic_settings import BaseSettings
+from dotenv import load_dotenv
 
-
+load_dotenv()
 class Settings(BaseSettings):
     # OpenAI API configuration
     openai_api_key: str = os.getenv("OPENAI_API_KEY", "")
+    
+    # Cohere API configuration
+    huggingface_token: str = os.getenv("HUGGINGFACE_TOKEN", "")
     
     # Vector database configuration
     vector_db_path: str = os.getenv("VECTOR_DB_PATH", "./vector_store")
     vector_db_type: str = os.getenv("VECTOR_DB_TYPE", "chromadb")
     
     # PDF upload path
-    pdf_upload_path: str = os.getenv("PDF_UPLOAD_PATH", "../data")
+    pdf_upload_path: str = os.getenv("PDF_UPLOAD_PATH", "../data") #ok
     
     # Embedding model configuration
-    embedding_model: str = os.getenv("EMBEDDING_MODEL", "text-embedding-ada-002")
+    embedding_model: str = os.getenv("EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2")
     
     # LLM configuration
-    llm_model: str = os.getenv("LLM_MODEL", "gpt-3.5-turbo")
+    llm_model: str = os.getenv("LLM_MODEL", "mistralai/Mixtral-8x7B-Instruct-v0.1")
     llm_temperature: float = float(os.getenv("LLM_TEMPERATURE", "0.1"))
     max_tokens: int = int(os.getenv("MAX_TOKENS", "1000"))
     
     # Chunking configuration
-    chunk_size: int = int(os.getenv("CHUNK_SIZE", "1000"))
-    chunk_overlap: int = int(os.getenv("CHUNK_OVERLAP", "200"))
+    chunk_size: int = int(os.getenv("CHUNK_SIZE", "1000")) #ok
+    chunk_overlap: int = int(os.getenv("CHUNK_OVERLAP", "200")) #ok
     
     # Retrieval configuration
     retrieval_k: int = int(os.getenv("RETRIEVAL_K", "5"))

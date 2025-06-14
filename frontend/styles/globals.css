@@ -1,4 +1,8 @@
-html,
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, 
 body {
   padding: 0;
   margin: 0;
@@ -16,3 +20,17 @@ a {
 }
 
 /* TODO: Add your custom styles here */ 
+
+.scrollable-div::-webkit-scrollbar {
+  width: 4px;
+}
+
+.scrollable-div::-webkit-scrollbar-track {
+  background: #e5e7eb; /* gray-200 */
+  border-radius: 6px;
+}
+
+.scrollable-div::-webkit-scrollbar-thumb {
+  background-color: #9ca3af; /* gray-400 */
+  border-radius: 6px;
+}

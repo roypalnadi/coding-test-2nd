@@ -25,6 +25,7 @@ class DocumentInfo(BaseModel):
     filename: str
     upload_date: datetime
     chunks_count: int
+    path: str
     status: str
 
 
