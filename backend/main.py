@@ -24,8 +24,6 @@ app = FastAPI(
     version="1.0.0"
 )
 
-print(settings.allowed_origins)
-
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
@@ -50,11 +48,20 @@ async def startup_event():
     global rag_pipeline
 
     logger.info("Starting RAG Q&A System...")
+
+    #initial pdf_processor
     pdf_processor = PDFProcessor()
+    
+    #initial vevtor_store
     vector_store = VectorStoreService()
+    
+    #initial rag_pipeline
     rag_pipeline = RAGPipeline(vector_store=vector_store)
+    
+    #initial sqlite
     Base.metadata.create_all(bind=engine)
 
+#handle all raise error
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
     logger.error(exc)

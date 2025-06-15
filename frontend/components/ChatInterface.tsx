@@ -129,21 +129,24 @@ export default function ChatInterface(props: ChatInterfaceProps) {
               return (
                 <BubbleChatAssistant key={index}>
                   {e.content}
-                  <div className="mt-4 bg-gray-50 p-4 rounded-xl border text-sm">
-                    <h3 className="text-gray-600 font-semibold mb-2">
-                      Sources
-                    </h3>
-                    {e.sources?.map((s, i) => (
-                      <div key={i} className="mb-2">
-                        <span className="font-medium">
-                          {s?.metadata?.filename ?? "-"} - Page {s?.page ?? "?"}
-                        </span>
-                        <p className="text-gray-700 whitespace-pre-line">
-                          {s?.content}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
+                  {(e.sources?.length ?? 0) > 0 && (
+                    <div className="mt-4 bg-gray-50 p-4 rounded-xl border text-sm">
+                      <h3 className="text-gray-600 font-semibold mb-2">
+                        Sources
+                      </h3>
+                      {e.sources?.map((s, i) => (
+                        <div key={i} className="mb-2">
+                          <span className="font-medium">
+                            {s?.metadata?.filename ?? "-"} - Page{" "}
+                            {s?.page ?? "?"}
+                          </span>
+                          <p className="text-gray-700 whitespace-pre-line">
+                            {s?.content}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </BubbleChatAssistant>
               );
             }

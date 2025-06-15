@@ -22,14 +22,15 @@ class RAGPipeline:
             repo_id=settings.llm_model,
             temperature=settings.llm_temperature,
             max_new_tokens=settings.max_tokens,
-            huggingfacehub_api_token=settings.huggingface_token
+            huggingfacehub_api_token=settings.huggingface_token,
         )
         
         self.prompt_template = PromptTemplate(
             input_variables=['context', 'question', 'chat_history'],
             template="""
                 <s>[INST] 
-                You are an AI assistant helping answer questions based on given documents and prior conversation.
+                You are a helpful AI assistant. 
+                You must answer the question using ONLY the provided context. 
 
                 Conversation History:
                 {chat_history}
@@ -53,17 +54,16 @@ class RAGPipeline:
         # 3. Generate answer using LLM
         # 4. Return answer with sources
 
+        documents = self._retrieve_documents(question)
+        context = self._generate_context(documents)
+        response = self._generate_llm_response(question, context, chat_history)
         try:
-            documents = self._retrieve_documents(question)
-            context = self._generate_context(documents)
-            response = self._generate_llm_response(question, context, chat_history)
 
             return {
                 "answer": response,
                 "sources": documents
             }
         except Exception as e:
-            print(e)
             logger.error(e)
             return {
                 "answer": "Sorry, an error occurred while processing your request.",
@@ -79,7 +79,10 @@ class RAGPipeline:
         result_search = self.vector_store.similarity_search(query, settings.retrieval_k)
         documents: List[DocumentSource] = []
         for doc, score in result_search: 
-            if score >= settings.similarity_threshold:
+            if not doc.page_content.strip():
+                continue
+
+            if score <= settings.similarity_threshold:
                 document_source = DocumentSource(
                     content=doc.page_content,
                     page=doc.metadata.get("page", 0),
@@ -92,7 +95,7 @@ class RAGPipeline:
     def _generate_context(self, documents: List[DocumentSource]) -> str:
         """Generate context from retrieved documents"""
         # TODO: Generate context string from documents
-        return "".join(document.content for document in documents)
+        return "\n\n".join(f"[Source: Page {document.page}] {document.content}" for document in documents)
     
     def _generate_llm_response(self, question: str, context: str, chat_history: List[Dict[str, str]] = None) -> str:
         """Generate response using LLM"""
